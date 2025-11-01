@@ -1,0 +1,28 @@
+# CLAUDE.md - local AI assistant guidance
+CLAUDE.md
+
+# Runtime data - RRD databases and generated graphs
+data/
+*.rrd
+*.png
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment (if used)
+venv/
+.venv/
+
+# Local Claude Code settings
+.claude/
+
+# Editor and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

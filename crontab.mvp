@@ -1,0 +1,9 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/scripts
+
+# Collect every 5 minutes
+*/5 * * * * python3 /scripts/collect_config.py >> /proc/1/fd/1 2>&1
+
+# Graph every 15 minutes
+*/15 * * * * python3 /scripts/graph_config.py   >> /proc/1/fd/1 2>&1
+

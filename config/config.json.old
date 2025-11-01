@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+
+  "collection": { "interval_seconds": 300 },
+
+  "rrd_path": "/data/cpu_stats.rrd",
+
+  "sensors": [
+    {
+      "id": "cpu_temp",
+      "name": "CPU Temp",
+      "unit": "°C",
+      "path": "/hostsys/{k10temp}/temp1_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "cpu_fan",
+      "name": "CPU Fan",
+      "unit": " rpm",
+      "path": "/hostsys/{nct6797}/fan4_input",
+      "transform": "value",
+      "min": 0,
+      "max": 10000
+    },
+    {
+      "id": "sys_temp",
+      "name": "System Temp",
+      "unit": "°C",
+      "path": "/hostsys/{nct6797}/temp2_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "case_fan",
+      "name": "Case Fan",
+      "unit": " rpm",
+      "path": "/hostsys/{nct6797}/fan2_input",
+      "transform": "value",
+      "min": 0,
+      "max": 5000
+    }
+  ],
+
+  "rrd": {
+    "step": 300,
+    "archives": [
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 1, "rows": 288 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 6, "rows": 336 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 24, "rows": 372 },
+      { "cf": "MAX", "xff": 0.5, "steps": 1, "rows": 288 },
+      { "cf": "MIN", "xff": 0.5, "steps": 1, "rows": 288 }
+    ]
+  },
+  "graphs": [
+    {
+      "output": "/data/graphs/temps_12h.png",
+      "title": "Temperatures — 12 hours",
+      "start": "-12h",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "cpu_temp", "color": "#ff0000", "legend": "CPU Temp (°C)" },
+        { "id": "sys_temp", "color": "#00aaff", "legend": "System Temp (°C)" }
+      ]
+    },
+    {
+      "output": "/data/graphs/fans_12h.png",
+      "title": "Fans — 12hr",
+      "start": "-12h",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "cpu_fan", "color": "#00aa00", "legend": "CPU Fan (rpm)" },
+        { "id": "case_fan", "color": "#aa00aa", "legend": "Case Fan (rpm)" }
+      ]
+    },
+    {
+      "output": "/data/graphs/temps_day.png",
+      "title": "Temperatures — Day",
+      "start": "-1d",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "cpu_temp", "color": "#ff0000", "legend": "CPU Temp (°C)" },
+        { "id": "sys_temp", "color": "#00aaff", "legend": "System Temp (°C)" }
+      ]
+    },
+    {
+      "output": "/data/graphs/fans_day.png",
+      "title": "Fans — Day",
+      "start": "-1d",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "cpu_fan", "color": "#00aa00", "legend": "CPU Fan (rpm)" },
+        { "id": "case_fan", "color": "#aa00aa", "legend": "Case Fan (rpm)" }
+      ]
+    },
+    {
+      "output": "/data/graphs/temps_week.png",
+      "title": "Temperatures — Week",
+      "start": "-7d",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "cpu_temp", "color": "#ff0000", "legend": "CPU Temp (°C)" },
+        { "id": "sys_temp", "color": "#00aaff", "legend": "System Temp (°C)" }
+      ]
+    },
+    {
+      "output": "/data/graphs/fans_week.png",
+      "title": "Fans — Week",
+      "start": "-7d",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "cpu_fan", "color": "#00aa00", "legend": "CPU Fan (rpm)" },
+        { "id": "case_fan", "color": "#aa00aa", "legend": "Case Fan (rpm)" }
+      ]
+    }
+  ]
+}

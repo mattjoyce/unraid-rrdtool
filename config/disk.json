@@ -1,0 +1,92 @@
+{
+  "schema_version": 2,
+  "enabled": true,
+  "prefix": "disks",
+  "rrd_path": "/data/disks.rrd",
+  "graphs_path": "/data/graphs",
+
+  "collection": {
+    "interval_seconds": 300,
+    "source_type": "unraid_disk"
+  },
+
+  "sensors": [
+    {
+      "id": "disk1",
+      "name": "Disk 1 (ZW63QE33)",
+      "unit": "°C",
+      "disk_id": "ST4000VN006-3CW104_ZW63QE33",
+      "min": 0,
+      "max": 70
+    },
+    {
+      "id": "disk2",
+      "name": "Disk 2 (ZW63QD1G)",
+      "unit": "°C",
+      "disk_id": "ST4000VN006-3CW104_ZW63QD1G",
+      "min": 0,
+      "max": 70
+    },
+    {
+      "id": "disk3",
+      "name": "Disk 3 (ZW63QD8A)",
+      "unit": "°C",
+      "disk_id": "ST4000VN006-3CW104_ZW63QD8A",
+      "min": 0,
+      "max": 70
+    }
+  ],
+
+  "rrd": {
+    "step": 300,
+    "archives": [
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 1, "rows": 288 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 6, "rows": 336 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 24, "rows": 372 },
+      { "cf": "MAX", "xff": 0.5, "steps": 1, "rows": 288 },
+      { "cf": "MIN", "xff": 0.5, "steps": 1, "rows": 288 }
+    ]
+  },
+
+  "graphs": [
+    {
+      "filename": "temps_12h.png",
+      "title": "Disk Temperatures — 12 hours",
+      "start": "-12h",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "disk1", "color": "#ff6600", "legend": "Disk 1 (°C)" },
+        { "id": "disk2", "color": "#00aa00", "legend": "Disk 2 (°C)" },
+        { "id": "disk3", "color": "#0066ff", "legend": "Disk 3 (°C)" }
+      ]
+    },
+    {
+      "filename": "temps_day.png",
+      "title": "Disk Temperatures — Day",
+      "start": "-1d",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "disk1", "color": "#ff6600", "legend": "Disk 1 (°C)" },
+        { "id": "disk2", "color": "#00aa00", "legend": "Disk 2 (°C)" },
+        { "id": "disk3", "color": "#0066ff", "legend": "Disk 3 (°C)" }
+      ]
+    },
+    {
+      "filename": "temps_week.png",
+      "title": "Disk Temperatures — Week",
+      "start": "-7d",
+      "end": "now",
+      "width": 1000,
+      "height": 300,
+      "series": [
+        { "id": "disk1", "color": "#ff6600", "legend": "Disk 1 (°C)" },
+        { "id": "disk2", "color": "#00aa00", "legend": "Disk 2 (°C)" },
+        { "id": "disk3", "color": "#0066ff", "legend": "Disk 3 (°C)" }
+      ]
+    }
+  ]
+}

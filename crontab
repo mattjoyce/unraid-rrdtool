@@ -1,0 +1,9 @@
+PYTHONPATH=/scripts
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/scripts
+
+# Collect all enabled configs every 1 minute
+*/1  * * * * python3 /scripts/collect_all.py >> /proc/1/fd/1 2>&1
+
+# Graph all enabled configs every 15 minutes
+*/15 * * * * python3 /scripts/graph_all.py   >> /proc/1/fd/1 2>&1

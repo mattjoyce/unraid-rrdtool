@@ -1,0 +1,227 @@
+{
+  "schema_version": 2,
+  "enabled": true,
+  "prefix": "system",
+  "rrd_path": "/data/system.rrd",
+  "graphs_path": "/data/graphs",
+
+  "collection": {
+    "interval_seconds": 60,
+    "source_type": "sysfs"
+  },
+
+  "sensors": [
+    {
+      "id": "cpu_tctl",
+      "name": "CPU Tctl (k10temp)",
+      "unit": "°C",
+      "path": "/hostsys/{k10temp}/temp1_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "cpu_tsi",
+      "name": "CPU TSI (die)",
+      "unit": "°C",
+      "path": "/hostsys/{nct6797}/temp13_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "cpu_socket",
+      "name": "CPU Socket (CPUTIN)",
+      "unit": "°C",
+      "path": "/hostsys/{nct6797}/temp2_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "mb_temp",
+      "name": "Motherboard (SYSTIN)",
+      "unit": "°C",
+      "path": "/hostsys/{nct6797}/temp1_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "auxtin0",
+      "name": "AUX0 (near CPU)",
+      "unit": "°C",
+      "path": "/hostsys/{nct6797}/temp3_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "auxtin2",
+      "name": "AUX2 (VRM/Chipset)",
+      "unit": "°C",
+      "path": "/hostsys/{nct6797}/temp5_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 150
+    },
+    {
+      "id": "nvme_composite",
+      "name": "NVMe Composite",
+      "unit": "°C",
+      "path": "/hostsys/{nvme}/temp1_input",
+      "transform": "value / 1000",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "id": "cpu_fan",
+      "name": "CPU Fan (Array Fan header)",
+      "unit": " rpm",
+      "path": "/hostsys/{nct6797}/fan4_input",
+      "transform": "value",
+      "min": 0,
+      "max": 10000
+    },
+    {
+      "id": "array_fan",
+      "name": "Array Fan (CPU header)",
+      "unit": " rpm",
+      "path": "/hostsys/{nct6797}/fan2_input",
+      "transform": "value",
+      "min": 0,
+      "max": 5000
+    }
+  ],
+
+  "rrd": {
+    "step": 300,
+    "archives": [
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 1, "rows": 288 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 6, "rows": 336 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 24, "rows": 372 },
+      { "cf": "MAX", "xff": 0.5, "steps": 1, "rows": 288 },
+      { "cf": "MIN", "xff": 0.5, "steps": 1, "rows": 288 }
+    ]
+  },
+
+  "graphs": [
+    {
+      "filename": "cpu_temps_12h.png",
+      "title": "CPU Temperatures — 12 hours",
+      "start": "-12h",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "cpu_tctl", "color": "#ff0000", "legend": "CPU Tctl" },
+        { "id": "cpu_tsi", "color": "#ff6600", "legend": "CPU TSI (die)" },
+        { "id": "cpu_socket", "color": "#ff9933", "legend": "CPU Socket" }
+      ]
+    },
+    {
+      "filename": "system_temps_12h.png",
+      "title": "System Temperatures — 12 hours",
+      "start": "-12h",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "mb_temp", "color": "#0066ff", "legend": "Motherboard" },
+        { "id": "auxtin0", "color": "#00aaff", "legend": "AUX0" },
+        { "id": "auxtin2", "color": "#ff00ff", "legend": "AUX2 (VRM/Chipset)" },
+        { "id": "nvme_composite", "color": "#00ff00", "legend": "NVMe" }
+      ]
+    },
+    {
+      "filename": "fans_12h.png",
+      "title": "Fans — 12 hours",
+      "start": "-12h",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "cpu_fan", "color": "#00aa00", "legend": "CPU Fan (rpm)" },
+        { "id": "array_fan", "color": "#aa00aa", "legend": "Array Fan (rpm)" }
+      ]
+    },
+    {
+      "filename": "cpu_temps_day.png",
+      "title": "CPU Temperatures — Day",
+      "start": "-1d",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "cpu_tctl", "color": "#ff0000", "legend": "CPU Tctl" },
+        { "id": "cpu_tsi", "color": "#ff6600", "legend": "CPU TSI (die)" },
+        { "id": "cpu_socket", "color": "#ff9933", "legend": "CPU Socket" }
+      ]
+    },
+    {
+      "filename": "system_temps_day.png",
+      "title": "System Temperatures — Day",
+      "start": "-1d",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "mb_temp", "color": "#0066ff", "legend": "Motherboard" },
+        { "id": "auxtin0", "color": "#00aaff", "legend": "AUX0" },
+        { "id": "auxtin2", "color": "#ff00ff", "legend": "AUX2 (VRM/Chipset)" },
+        { "id": "nvme_composite", "color": "#00ff00", "legend": "NVMe" }
+      ]
+    },
+    {
+      "filename": "fans_day.png",
+      "title": "Fans — Day",
+      "start": "-1d",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "cpu_fan", "color": "#00aa00", "legend": "CPU Fan (rpm)" },
+        { "id": "array_fan", "color": "#aa00aa", "legend": "Array Fan (rpm)" }
+      ]
+    },
+    {
+      "filename": "cpu_temps_week.png",
+      "title": "CPU Temperatures — Week",
+      "start": "-7d",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "cpu_tctl", "color": "#ff0000", "legend": "CPU Tctl" },
+        { "id": "cpu_tsi", "color": "#ff6600", "legend": "CPU TSI (die)" },
+        { "id": "cpu_socket", "color": "#ff9933", "legend": "CPU Socket" }
+      ]
+    },
+    {
+      "filename": "system_temps_week.png",
+      "title": "System Temperatures — Week",
+      "start": "-7d",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "mb_temp", "color": "#0066ff", "legend": "Motherboard" },
+        { "id": "auxtin0", "color": "#00aaff", "legend": "AUX0" },
+        { "id": "auxtin2", "color": "#ff00ff", "legend": "AUX2 (VRM/Chipset)" },
+        { "id": "nvme_composite", "color": "#00ff00", "legend": "NVMe" }
+      ]
+    },
+    {
+      "filename": "fans_week.png",
+      "title": "Fans — Week",
+      "start": "-7d",
+      "end": "now",
+      "width": 1200,
+      "height": 400,
+      "series": [
+        { "id": "cpu_fan", "color": "#00aa00", "legend": "CPU Fan (rpm)" },
+        { "id": "array_fan", "color": "#aa00aa", "legend": "Array Fan (rpm)" }
+      ]
+    }
+  ]
+}

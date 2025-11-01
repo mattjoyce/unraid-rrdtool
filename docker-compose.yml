@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  rrdtool-graphs:
+    build:
+      context: .
+      dockerfile: Dockerfile.mvp
+    image: rrdtool-graphs:latest
+    container_name: rrdtool-graphs
+    restart: unless-stopped
+    environment:
+      - TZ=Australia/Sydney
+    volumes:
+      - ./config:/config:rw
+      - ./data:/data:rw
+      - /sys/class/hwmon:/host:ro
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /data/cpu_stats.rrd && pgrep crond >/dev/null"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
