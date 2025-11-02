@@ -27,6 +27,7 @@ COPY graph_all.py         /scripts/graph_all.py
 COPY init_config.py       /scripts/init_config.py
 COPY init_all.py          /scripts/init_all.py
 COPY path_resolver.py     /scripts/path_resolver.py
+COPY theme_loader.py      /scripts/theme_loader.py
 COPY diags.py             /scripts/diags.py
 COPY disk_temp.py         /scripts/disk_temp.py
 COPY start_config.sh      /scripts/start_config.sh

@@ -17,9 +17,9 @@ Outputs clear PASS/FAIL lines and actionable recommendations.
 """
 
 from __future__ import annotations
-import os, sys, json, subprocess, shlex, time, argparse
+import os, sys, json, subprocess, shlex, time, argparse, re
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 RESULTS: List[Dict[str, Any]] = []
@@ -170,10 +170,13 @@ def check_config_detail(cfg_path: Path):
     elif source_type == "unraid_disk":
         check_disk_sensors(cfg_path.name, sensors)
     
+    # Check theme
+    check_theme(cfg_path.name, cfg)
+
     # Check RRD
     if rrd_path:
         check_rrd_detail(cfg_path.name, rrd_path, sensors)
-    
+
     # Check graphs
     graphs = cfg.get("graphs", [])
     check_graphs(cfg_path.name, cfg, graphs)
@@ -283,6 +286,107 @@ def check_rrd_detail(config_name: str, rrd_path: str, sensors: List[Dict]):
         match = ds_count == sensor_count
         add_result(f"{config_name}.rrd.ds_count", match, 
                   f"RRD has {ds_count} DS, config has {sensor_count} sensors")
+
+def check_theme(config_name: str, cfg: Dict) -> Optional[Dict]:
+    """Validate theme configuration and return loaded theme if valid."""
+    print(f"\n  → Checking theme...")
+    theme_name = cfg.get("theme")
+
+    if not theme_name:
+        add_result(f"{config_name}.theme.specified", True, "No theme specified (using defaults)")
+        return None
+
+    add_result(f"{config_name}.theme.specified", True, f"Theme: {theme_name}")
+
+    # Check if theme file exists
+    theme_path = Path("/config/themes") / f"{theme_name}.json"
+    if not theme_path.exists():
+        add_result(f"{config_name}.theme.exists", False, f"Theme file not found: {theme_path}")
+        return None
+
+    add_result(f"{config_name}.theme.exists", True, f"Theme file found: {theme_path}")
+
+    # Load and validate theme JSON
+    try:
+        with theme_path.open() as f:
+            theme = json.load(f)
+        add_result(f"{config_name}.theme.valid_json", True, "Theme JSON is valid")
+    except Exception as e:
+        add_result(f"{config_name}.theme.valid_json", False, f"Invalid JSON: {e}")
+        return None
+
+    # Validate theme structure
+    required_sections = ["scaffolding", "series"]
+    missing_sections = [s for s in required_sections if s not in theme]
+    if missing_sections:
+        add_result(f"{config_name}.theme.structure", False,
+                  f"Missing sections: {', '.join(missing_sections)}")
+        return None
+
+    add_result(f"{config_name}.theme.structure", True, "Theme has required sections")
+
+    # Validate color format (hex with optional alpha)
+    hex_pattern = re.compile(r'^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$')
+    all_colors = {}
+
+    for section in ["scaffolding", "series", "alarms"]:
+        if section in theme:
+            all_colors.update(theme[section])
+
+    invalid_colors = []
+    for name, color in all_colors.items():
+        if not hex_pattern.match(color):
+            invalid_colors.append(f"{name}={color}")
+
+    if invalid_colors:
+        add_result(f"{config_name}.theme.color_format", False,
+                  f"Invalid hex colors: {', '.join(invalid_colors)}")
+    else:
+        add_result(f"{config_name}.theme.color_format", True,
+                  f"All {len(all_colors)} colors are valid hex")
+
+    # Validate fonts section (optional)
+    if "fonts" in theme:
+        fonts = theme["fonts"]
+        invalid_fonts = []
+        for font_name, size in fonts.items():
+            if not isinstance(size, int) or size < 6 or size > 24:
+                invalid_fonts.append(f"{font_name}={size}")
+
+        if invalid_fonts:
+            add_result(f"{config_name}.theme.fonts", False,
+                      f"Invalid font sizes (must be 6-24): {', '.join(invalid_fonts)}")
+        else:
+            add_result(f"{config_name}.theme.fonts", True,
+                      f"{len(fonts)} font sizes defined")
+    else:
+        add_result(f"{config_name}.theme.fonts", True, "No custom fonts (using defaults)")
+
+    # Check series colors referenced in graphs
+    graphs = cfg.get("graphs", [])
+    referenced_colors = set()
+    undefined_colors = []
+
+    for graph in graphs:
+        for series in graph.get("series", []):
+            color_ref = series.get("color", "")
+            # If it's not a hex color, it's a named reference
+            if color_ref and not color_ref.startswith("#"):
+                referenced_colors.add(color_ref.upper())
+                if color_ref.upper() not in all_colors:
+                    undefined_colors.append(f"{color_ref} (in {graph.get('filename', '?')})")
+
+    if undefined_colors:
+        add_result(f"{config_name}.theme.color_refs", False,
+                  f"Undefined color references: {', '.join(undefined_colors)}")
+    elif referenced_colors:
+        add_result(f"{config_name}.theme.color_refs", True,
+                  f"All {len(referenced_colors)} named colors are defined")
+    else:
+        add_result(f"{config_name}.theme.color_refs", True,
+                  "No named color references used (all hex)")
+
+    return theme
 
 def check_graphs(config_name: str, cfg: Dict, graphs: List[Dict]):
     """Verify all PNG graph files exist with correct prefix_{filename} pattern."""
@@ -408,7 +512,15 @@ def print_summary():
         print("     - Verify crond is running as PID 1")
         print("     - Check crontab: docker exec rrdtool-graphs cat /etc/crontabs/root")
         print("     - View logs: docker logs -f rrdtool-graphs")
-    
+
+    theme_issues = [r for r in RESULTS if '.theme.' in r['check'] and not r['ok']]
+    if theme_issues:
+        print("\n  5. THEME PROBLEMS:")
+        print("     - Ensure /config/themes/ directory exists")
+        print("     - Verify theme JSON file exists and is valid")
+        print("     - Check all named colors used in graphs are defined in theme")
+        print("     - Validate color format: #RRGGBB or #RRGGBBAA")
+
     return False
 
 # ---------- Main ----------

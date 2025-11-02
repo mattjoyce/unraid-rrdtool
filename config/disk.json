@@ -1,6 +1,7 @@
 {
   "schema_version": 2,
   "enabled": true,
+  "theme": "unraid-dark",
   "prefix": "disks",
   "rrd_path": "/data/disks.rrd",
   "graphs_path": "/data/graphs",

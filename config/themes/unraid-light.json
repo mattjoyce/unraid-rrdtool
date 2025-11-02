@@ -1,0 +1,34 @@
+{
+  "name": "Unraid Light Theme",
+  "description": "Light theme matching Unraid web GUI aesthetics with actual UI colors.",
+  "scaffolding": {
+    "BACK": "#f2f2f2",
+    "CANVAS": "#f7f9f9",
+    "FRAME": "#acaeae",
+    "FONT": "#1d1b1b",
+    "AXIS": "#1d1b1b",
+    "GRID": "#d0d0d080",
+    "MGRID": "#a0a0a0b3",
+    "ARROW": "#1d1b1b"
+  },
+  "series": {
+    "PRIMARY": "#FF6A00",
+    "AMBER": "#FFB100",
+    "GREEN": "#10B981",
+    "RED": "#DC2626",
+    "ACCENT": "#3B82F6",
+    "BLUE": "#2563EB",
+    "PURPLE": "#9333EA",
+    "CYAN": "#06B6D4"
+  },
+  "alarms": {
+    "WARN_HRULE": "#FF6A00CC",
+    "CRITICAL_HRULE": "#DC2626CC"
+  },
+  "fonts": {
+    "DEFAULT": 11,
+    "TITLE": 13,
+    "AXIS": 10,
+    "LEGEND": 11
+  }
+}

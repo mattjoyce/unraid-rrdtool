@@ -1,0 +1,31 @@
+{
+  "name": "Unraid Dark Theme",
+  "description": "Dark theme for rrdtool graphs matching Unraid UI aesthetics. Alpha colors rendered on BACK #0F1115.",
+  "scaffolding": {
+    "BACK": "#0F1115",
+    "CANVAS": "#0B0E14",
+    "FRAME": "#2A2F3A",
+    "FONT": "#E6E8EB",
+    "AXIS": "#A6ADB7",
+    "GRID": "#3A404880",
+    "MGRID": "#545B66B3",
+    "ARROW": "#A6ADB7"
+  },
+  "series": {
+    "PRIMARY": "#FF6A00",
+    "AMBER": "#FFB100",
+    "GREEN": "#34D399",
+    "RED": "#F43F5E",
+    "ACCENT": "#3B82F6"
+  },
+  "alarms": {
+    "WARN_HRULE": "#FF4D00CC",
+    "CRITICAL_HRULE": "#FFD166CC"
+  },
+  "fonts": {
+    "DEFAULT": 11,
+    "TITLE": 13,
+    "AXIS": 10,
+    "LEGEND": 11
+  }
+}

@@ -15,7 +15,8 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+import theme_loader
 
 def load_config(config_path: Path) -> Dict[str, Any]:
     """Load and parse JSON config file."""
@@ -23,7 +24,7 @@ def load_config(config_path: Path) -> Dict[str, Any]:
         return json.load(f)
 
 def run_graph(rrd_path: str, graph: Dict[str, Any], sensors: List[Dict[str, Any]],
-              prefix: str, graphs_path: str) -> None:
+              prefix: str, graphs_path: str, theme: Optional[Dict[str, Any]] = None) -> None:
     """Generate a single PNG graph using rrdtool. Filename uses prefix_{filename} pattern."""
     # Build output path: {graphs_path}/{prefix}_{filename}
     filename = graph.get("filename", "graph.png")
@@ -53,6 +54,13 @@ def run_graph(rrd_path: str, graph: Dict[str, Any], sensors: List[Dict[str, Any]
         "--vertical-label", "Value"
     ]
 
+    # Add theme color and font options if theme is loaded
+    if theme:
+        theme_colors = theme_loader.get_rrdtool_colors(theme)
+        cmd.extend(theme_colors)
+        theme_fonts = theme_loader.get_rrdtool_fonts(theme)
+        cmd.extend(theme_fonts)
+
     # Add DEFs once per referenced id
     added_defs = set()
     for s in series:
@@ -69,7 +77,9 @@ def run_graph(rrd_path: str, graph: Dict[str, Any], sensors: List[Dict[str, Any]
         sid = s["id"]
         if sid not in added_defs:
             continue
-        color  = s.get("color", "#000000")
+        color_ref = s.get("color", "#000000")
+        # Resolve named colors (e.g., "PRIMARY") to hex values using theme
+        color = theme_loader.resolve_color(color_ref, theme)
         legend = s.get("legend", sid)
         cmd += [f"LINE1:{sid}{color}:{legend}"]
 
@@ -102,13 +112,21 @@ def main():
     sensors = cfg.get("sensors", [])
     prefix = cfg.get("prefix", "")
     graphs_path = cfg.get("graphs_path", "/data/graphs")
+    theme_name = cfg.get("theme")
 
     if not rrd_path:
         print("[graph] ERROR: rrd_path not found in config")
         return
 
+    # Load theme if specified
+    theme = None
+    if theme_name:
+        theme = theme_loader.load_theme(theme_name, config_dir=args.config.parent)
+        if not theme:
+            print(f"[graph] WARNING: Could not load theme '{theme_name}', using default colors")
+
     for g in graphs:
-        run_graph(rrd_path, g, sensors, prefix, graphs_path)
+        run_graph(rrd_path, g, sensors, prefix, graphs_path, theme)
 
 if __name__ == "__main__":
     main()

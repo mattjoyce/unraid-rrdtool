@@ -1,6 +1,7 @@
 {
   "schema_version": 2,
   "enabled": true,
+  "theme": "unraid-dark",
   "prefix": "system",
   "rrd_path": "/data/system.rrd",
   "graphs_path": "/data/graphs",
