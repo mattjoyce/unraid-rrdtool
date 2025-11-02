@@ -13,15 +13,21 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
 
 ## Example Graphs
 
-### System Temperatures
-![System Temperatures - Day View](images/system_system_temps_day.png)
+### System Temperatures (Dark Theme)
+![System CPU Temperatures - Day View](images/system_cpu_temps_day.png)
+*Dark theme with high contrast - ideal for standalone displays*
 
-### Disk Temperatures
+### Disk Temperatures (Light Theme)
 ![Disk Temperatures - Day View](images/disks_temps_day.png)
+*Light theme matching Unraid web GUI - seamless dashboard integration*
 
 ## Features
 
 - **Built-in web server**: View all graphs in your browser at `http://your-server:8080`
+- **Theme system**: Light and dark themes with customizable colors and fonts
+  - `unraid-light` - Matches Unraid web GUI for seamless dashboard integration
+  - `unraid-dark` - High contrast dark theme for standalone displays
+  - Support for custom themes with named colors and alpha transparency
 - **Multi-config system**: Monitor different sensor groups independently
 - **Flexible sensor sources**:
   - Linux hwmon (`sysfs`) for hardware sensors
@@ -65,6 +71,22 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
 
 Each `config/*.json` file defines an independent monitoring group. See [CLAUDE.md](CLAUDE.md) for detailed configuration schema and architecture documentation.
 
+### Themes
+
+Select a theme for each config to control graph appearance:
+
+```json
+{
+  "schema_version": 2,
+  "enabled": true,
+  "theme": "unraid-light",
+  "prefix": "system",
+  ...
+}
+```
+
+Themes are stored in `config/themes/*.json` and control colors, fonts, and visual styling. Create custom themes by copying and modifying existing ones.
+
 ### Example sensor configuration:
 ```json
 {
@@ -85,8 +107,11 @@ The `{k10temp}` placeholder automatically resolves to the correct hwmon device p
 ```
 ├── config/              # JSON configuration files
 │   ├── system.json     # System sensors (CPU, motherboard, fans)
-│   └── disk.json       # Disk temperature monitoring
-├── scripts/            # Python collection and graphing scripts
+│   ├── disk.json       # Disk temperature monitoring
+│   └── themes/         # Graph theme files
+│       ├── unraid-light.json
+│       └── unraid-dark.json
+├── theme_loader.py     # Theme loading and color resolution
 ├── data/               # RRD databases and generated graphs
 ├── Dockerfile          # Container definition
 └── CLAUDE.md          # Detailed architecture and development docs
