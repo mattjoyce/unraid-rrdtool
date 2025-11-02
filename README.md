@@ -69,7 +69,7 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
 
 ## Configuration
 
-Each `config/*.json` file defines an independent monitoring group. See [CLAUDE.md](CLAUDE.md) for detailed configuration schema and architecture documentation.
+Each `config/*.json` file defines an independent monitoring group. 
 
 ### Themes
 
@@ -113,8 +113,7 @@ The `{k10temp}` placeholder automatically resolves to the correct hwmon device p
 │       └── unraid-dark.json
 ├── theme_loader.py     # Theme loading and color resolution
 ├── data/               # RRD databases and generated graphs
-├── Dockerfile          # Container definition
-└── CLAUDE.md          # Detailed architecture and development docs
+└── Dockerfile          # Container definition
 ```
 
 ## Credits
@@ -123,7 +122,6 @@ Built with [RRDtool](https://oss.oetiker.ch/rrdtool/) by Tobi Oetiker - a time-t
 
 ## Documentation
 
-- [CLAUDE.md](CLAUDE.md) - Complete architecture, configuration schema, and development guide
 - [info.md](info.md) - Additional project information
 
 ## License
