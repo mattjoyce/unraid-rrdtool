@@ -1,5 +1,8 @@
 version: "3.9"
 
+# NOTE: This docker-compose.yml is for development/testing only.
+# Unraid does NOT support docker-compose. Use run_container.sh or the Docker UI on Unraid.
+
 services:
   rrdtool-graphs:
     build:
