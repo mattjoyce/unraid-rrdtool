@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="300">
+    <title>RRDTool Graphs - Unraid Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .last-update {
+            color: #888;
+            font-size: 0.9em;
+        }
+        .graph-group {
+            margin-bottom: 40px;
+        }
+        .group-title {
+            color: #4CAF50;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+            padding: 10px;
+            background: #2a2a2a;
+            border-left: 4px solid #4CAF50;
+        }
+        .graphs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 20px;
+        }
+        .graph-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .graph-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+        .graph-name {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #888;
+            text-align: center;
+        }
+        .no-graphs {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        .no-graphs h2 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .graphs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RRDTool Monitoring Graphs</h1>
+            <div class="last-update">Auto-refresh every 5 minutes</div>
+        </header>
+
+        {% if graph_groups %}
+            {% for prefix, graphs in graph_groups.items() %}
+            <div class="graph-group">
+                <h2 class="group-title">{{ prefix }} Sensors</h2>
+                <div class="graphs">
+                    {% for graph in graphs %}
+                    <div class="graph-item">
+                        <img src="/graphs/{{ graph }}?t={{ range(1, 9999999) | random }}"
+                             alt="{{ graph }}"
+                             loading="lazy">
+                        <div class="graph-name">{{ graph }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-graphs">
+                <h2>No graphs available yet</h2>
+                <p>Graphs will appear here once the collection and graphing processes have run.</p>
+                <p>Check back in a few minutes.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

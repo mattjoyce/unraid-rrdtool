@@ -4,12 +4,14 @@ services:
   rrdtool-graphs:
     build:
       context: .
-      dockerfile: Dockerfile.mvp
+      dockerfile: Dockerfile
     image: rrdtool-graphs:latest
     container_name: rrdtool-graphs
     restart: unless-stopped
     environment:
       - TZ=Australia/Sydney
+    ports:
+      - "8080:8080"
     volumes:
       - ./config:/config:rw
       - ./data:/data:rw

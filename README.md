@@ -21,6 +21,7 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
 
 ## Features
 
+- **Built-in web server**: View all graphs in your browser at `http://your-server:8080`
 - **Multi-config system**: Monitor different sensor groups independently
 - **Flexible sensor sources**:
   - Linux hwmon (`sysfs`) for hardware sensors
@@ -48,6 +49,7 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
    docker build -t rrdtool-graphs:latest .
    docker run -d --name rrdtool-graphs --restart unless-stopped \
      -e TZ=Australia/Sydney \
+     -p 8080:8080 \
      -v "$PWD/config:/config" \
      -v "$PWD/data:/data" \
      --mount type=bind,source=/sys,target=/hostsys,readonly \
@@ -56,7 +58,8 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
    ```
 
 4. **View graphs**:
-   Graphs are generated in `./data/graphs/` directory
+   - Web interface: Open `http://your-server-ip:8080` in your browser
+   - Direct files: Graphs are also available in `./data/graphs/` directory
 
 ## Configuration
 

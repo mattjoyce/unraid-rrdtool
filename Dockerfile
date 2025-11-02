@@ -5,6 +5,7 @@ FROM alpine:3.20
 RUN apk add --no-cache \
     python3 \
     py3-pip \
+    py3-flask \
     rrdtool \
     busybox \
     tzdata \
@@ -35,6 +36,10 @@ COPY crontab              /etc/crontabs/root
 COPY unraid_disk.py       /scripts/unraid_disk.py
 COPY unraid_disk_info.py  /scripts/unraid_disk_info.py
 
+# 3c) Graph web server
+COPY graph_server.py      /scripts/graph_server.py
+COPY templates/           /scripts/templates/
+
 # 4) Permissions
 RUN chmod +x /scripts/*.py /scripts/start_config.sh && \
     mkdir -p /config /data /data/graphs
@@ -43,5 +48,8 @@ RUN chmod +x /scripts/*.py /scripts/start_config.sh && \
 RUN grep -q '^PYTHONPATH=/scripts' /etc/crontabs/root || \
     sed -i '1i PYTHONPATH=/scripts' /etc/crontabs/root
 
-# 6) Default command: init, then foreground crond
+# 6) Expose web server port
+EXPOSE 8080
+
+# 7) Default command: init, then foreground crond
 ENTRYPOINT ["/scripts/start_config.sh"]

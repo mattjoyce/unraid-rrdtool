@@ -8,6 +8,7 @@ docker run -d \
   --restart unless-stopped \
   -e TZ=Australia/Sydney \
   -e PYTHONPATH=/scripts \
+  -p 8080:8080 \
   -v /mnt/user/appdata/rrdtool-graphs/config:/config:rw \
   -v /mnt/user/appdata/rrdtool-graphs/data:/data:rw \
   -v /sys:/hostsys:ro \
