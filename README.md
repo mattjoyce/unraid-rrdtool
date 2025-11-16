@@ -37,6 +37,7 @@ Built on a multi-config architecture where each sensor group (system, disks, etc
 - **Automated graphing**: Generates fresh graphs every 15 minutes
 - **Configurable time ranges**: 12-hour, day, week, or custom periods
 - **Transform expressions**: Apply scaling/calculations to raw sensor values
+- **Custom graph scripts**: Full RRDtool power via bash scripts for complex visualizations (stacked areas, inverted IO, threshold lines)
 - **Designed for maintainability**: Clean Python code, JSON configs, LLM-friendly architecture
 
 ## Quick Start
@@ -101,6 +102,89 @@ Themes are stored in `config/themes/*.json` and control colors, fonts, and visua
 ```
 
 The `{k10temp}` placeholder automatically resolves to the correct hwmon device path, even after reboots.
+
+### Custom Graph Scripts
+
+For complex graph types (stacked areas, inverted IO, mixed visualizations, threshold lines), use custom bash scripts instead of JSON definitions. This gives you full access to RRDtool's power while keeping simple graphs simple.
+
+**Example config entry:**
+```json
+{
+  "graphs": [
+    {
+      "filename": "cpu_temps_12h.png",
+      "title": "CPU Temperatures — 12 hours",
+      "start": "-12h",
+      "series": [
+        {"id": "cpu_tctl", "color": "PRIMARY", "legend": "CPU Tctl"}
+      ]
+    },
+    {
+      "type": "custom",
+      "script": "custom_graphs/nic_io.sh",
+      "filename": "nic_io_day.png",
+      "start": "-1d",
+      "width": 1200,
+      "height": 400
+    }
+  ]
+}
+```
+
+**Script interface:**
+
+Your custom script receives these positional arguments:
+1. `$1` - RRD database path (e.g., `/data/system.rrd`)
+2. `$2` - Output PNG path (e.g., `/data/graphs/system_nic_io_day.png`)
+3. `$3` - Start time (e.g., `-1d`)
+4. `$4` - End time (e.g., `now`)
+5. `$5` - Width in pixels (e.g., `1200`)
+6. `$6` - Height in pixels (e.g., `400`)
+7. `$7` - Theme environment file path (e.g., `/tmp/theme_system.env`)
+
+**Using themes in custom scripts:**
+
+Source the theme env file to access colors and fonts:
+```bash
+#!/bin/sh
+RRD_PATH="$1"
+OUTPUT="$2"
+START="$3"
+END="$4"
+WIDTH="$5"
+HEIGHT="$6"
+THEME_ENV="$7"
+
+# Source theme variables
+if [ -f "$THEME_ENV" ]; then
+    . "$THEME_ENV"
+fi
+
+# Use theme variables in rrdtool command
+rrdtool graph "$OUTPUT" \
+  --start "$START" --end "$END" \
+  --width "$WIDTH" --height "$HEIGHT" \
+  --color BACK"${THEME_COLOR_BACK}" \
+  --color CANVAS"${THEME_COLOR_CANVAS}" \
+  --font DEFAULT:"${THEME_FONT_DEFAULT}" \
+  DEF:temp="$RRD_PATH:cpu_temp:AVERAGE" \
+  LINE2:temp"${THEME_COLOR_PRIMARY}":"CPU Temperature"
+```
+
+**Available theme variables:**
+- **Scaffolding colors**: `THEME_COLOR_BACK`, `THEME_COLOR_CANVAS`, `THEME_COLOR_FRAME`, `THEME_COLOR_FONT`, `THEME_COLOR_AXIS`, `THEME_COLOR_GRID`, `THEME_COLOR_MGRID`, `THEME_COLOR_ARROW`
+- **Series colors**: `THEME_COLOR_PRIMARY`, `THEME_COLOR_AMBER`, `THEME_COLOR_GREEN`, `THEME_COLOR_RED`, `THEME_COLOR_ACCENT`
+- **Alarm colors**: `THEME_COLOR_WARN_HRULE`, `THEME_COLOR_CRITICAL_HRULE`
+- **Fonts**: `THEME_FONT_DEFAULT`, `THEME_FONT_TITLE`, `THEME_FONT_AXIS`, `THEME_FONT_LEGEND`
+
+**Example scripts:**
+
+See the `examples/` directory for reference implementations:
+- `examples/nic_io.sh` - Network IO with inverted download (Cacti-style)
+- `examples/disk_temps_stacked.sh` - Stacked area graph for multiple disks
+- `examples/temps_with_thresholds.sh` - Temperature graphs with warning/critical threshold lines
+
+Copy these to `/config/custom_graphs/` and reference them in your config files.
 
 ## Project Structure
 

@@ -92,26 +92,38 @@ def read_sysfs_sensor(sensor: Dict[str, Any]) -> float | None:
         return None
 
 def read_unraid_disk_sensor(sensor: Dict[str, Any]) -> float | None:
-    """Read disk temperature from disks.ini"""
+    """Read disk field from disks.ini (temp, numReads, numWrites, etc.)"""
     from unraid_disk import get_value
-    
+
     label = sensor.get("name", sensor.get("id", "unknown"))
     unit = sensor.get("unit", "")
     disk_id = sensor.get("disk_id")
-    
+    field = sensor.get("field", "temp")  # Default to temperature for backwards compatibility
+
     if not disk_id:
         print(f"[collect] Error: {label} missing disk_id")
         return None
-    
+
     try:
-        temp_str = get_value(disk_id, "temp")
-        if temp_str is None:
-            print(f"[collect] {label}: no temp data")
+        field_str = get_value(disk_id, field)
+        if field_str is None:
+            print(f"[collect] {label}: no {field} data")
             return None
-        val = float(temp_str)
+        # Handle non-numeric values (e.g., "*" for spun down disks)
+        if field_str == "*" or field_str == "-":
+            print(f"[collect] {label}: {field}={field_str} (skipping)")
+            return None
+        val = float(field_str)
         val = apply_transform(val, sensor.get("transform"))
+        # COUNTER/DERIVE types need integers, not floats
+        ds_type = sensor.get("ds_type", "GAUGE")
+        if ds_type in ("COUNTER", "DERIVE", "ABSOLUTE"):
+            val = int(val)
         print(f"{label}: {val}{unit}")
         return val
+    except ValueError as e:
+        print(f"[collect] Error parsing {label} {field}='{field_str}': {e}")
+        return None
     except Exception as e:
         print(f"[collect] Error reading {label}: {e}")
         return None

@@ -44,8 +44,9 @@ def create_rrd(config_path: Path):
     for sensor in config['sensors']:
         min_val = sensor.get('min', 0)
         max_val = sensor.get('max', 'U')
+        ds_type = sensor.get('ds_type', 'GAUGE')  # Support GAUGE, COUNTER, DERIVE, ABSOLUTE
         # DS:name:type:heartbeat:min:max
-        ds = f"DS:{sensor['id']}:GAUGE:{step*2}:{min_val}:{max_val}"
+        ds = f"DS:{sensor['id']}:{ds_type}:{step*2}:{min_val}:{max_val}"
         cmd.append(ds)
     
     # Add archives

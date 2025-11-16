@@ -1,0 +1,133 @@
+{
+  "schema_version": 2,
+  "enabled": true,
+  "theme": "unraid-dark",
+  "prefix": "disk_io",
+  "rrd_path": "/data/disk_io.rrd",
+  "graphs_path": "/data/graphs",
+
+  "collection": {
+    "interval_seconds": 60,
+    "source_type": "unraid_disk"
+  },
+
+  "sensors": [
+    {
+      "id": "disk1_reads",
+      "name": "Disk 1 Reads",
+      "unit": "ops",
+      "disk_id": "ST4000VN006-3CW104_ZW63QD1G",
+      "field": "numReads",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "disk1_writes",
+      "name": "Disk 1 Writes",
+      "unit": "ops",
+      "disk_id": "ST4000VN006-3CW104_ZW63QD1G",
+      "field": "numWrites",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "disk2_reads",
+      "name": "Disk 2 Reads",
+      "unit": "ops",
+      "disk_id": "ST4000VN006-3CW104_ZW63QD8A",
+      "field": "numReads",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "disk2_writes",
+      "name": "Disk 2 Writes",
+      "unit": "ops",
+      "disk_id": "ST4000VN006-3CW104_ZW63QD8A",
+      "field": "numWrites",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "parity_reads",
+      "name": "Parity Reads",
+      "unit": "ops",
+      "disk_id": "ST4000VN006-3CW104_ZW63QE33",
+      "field": "numReads",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "parity_writes",
+      "name": "Parity Writes",
+      "unit": "ops",
+      "disk_id": "ST4000VN006-3CW104_ZW63QE33",
+      "field": "numWrites",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "cache_reads",
+      "name": "Cache Reads",
+      "unit": "ops",
+      "disk_id": "Samsung_SSD_970_EVO_250GB_S465NB0K830737E",
+      "field": "numReads",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    },
+    {
+      "id": "cache_writes",
+      "name": "Cache Writes",
+      "unit": "ops",
+      "disk_id": "Samsung_SSD_970_EVO_250GB_S465NB0K830737E",
+      "field": "numWrites",
+      "ds_type": "COUNTER",
+      "min": 0,
+      "max": "U"
+    }
+  ],
+
+  "rrd": {
+    "step": 60,
+    "archives": [
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 1, "rows": 1440 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 5, "rows": 2016 },
+      { "cf": "AVERAGE", "xff": 0.5, "steps": 60, "rows": 744 },
+      { "cf": "MAX", "xff": 0.5, "steps": 1, "rows": 1440 }
+    ]
+  },
+
+  "graphs": [
+    {
+      "type": "custom",
+      "script": "/scripts/custom/disk_io_activity.sh",
+      "filename": "io_12h.png",
+      "start": "-12h",
+      "width": 1200,
+      "height": 400
+    },
+    {
+      "type": "custom",
+      "script": "/scripts/custom/disk_io_activity.sh",
+      "filename": "io_day.png",
+      "start": "-1d",
+      "width": 1200,
+      "height": 400
+    },
+    {
+      "type": "custom",
+      "script": "/scripts/custom/disk_io_activity.sh",
+      "filename": "io_week.png",
+      "start": "-7d",
+      "width": 1200,
+      "height": 400
+    }
+  ]
+}
