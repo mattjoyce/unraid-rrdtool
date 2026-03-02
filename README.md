@@ -211,3 +211,6 @@ Built with [RRDtool](https://oss.oetiker.ch/rrdtool/) by Tobi Oetiker - a time-t
 ## License
 
 See LICENSE file for details.
+
+## Changelog
+See [CHANGELOG.md](CHANGELOG.md).
